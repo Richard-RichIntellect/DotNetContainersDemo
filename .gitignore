@@ -1,0 +1,13 @@
+bin/
+obj/
+*.user
+.vs/
+.idea/
+*.log
+*.tar
+
+# Claude Code process/working files — not part of the public repo
+.claude/
+CLAUDE.md
+HANDOVER.md
+PROGRESS.md

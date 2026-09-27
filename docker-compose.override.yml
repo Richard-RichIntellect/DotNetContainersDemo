@@ -1,0 +1,40 @@
+# Local-dev-only overrides — ports published to the host, the connection
+# string the API uses to reach the "db" service by its container name, and
+# the ordering so the API waits for SQL Server to report healthy before it
+# starts. docker compose merges this over docker-compose.yml automatically
+# when you run `docker compose up` with no extra flags, and Visual Studio
+# does the same when you press F5 with the compose project selected.
+#
+# The user-secrets volume mounts below were added by Visual Studio's
+# Container Orchestrator Support wizard (Add > Container Orchestrator
+# Support) and are kept as-is even though nothing in this demo reads user
+# secrets — removing them isn't worth diverging from what the wizard
+# generates. The wizard's HTTPS bits (ASPNETCORE_HTTPS_PORTS, a second
+# published port, dev-cert volume mounts) were dropped: this API only ever
+# listens on HTTP (see the Dockerfile's single EXPOSE 8080), so an HTTPS
+# port would just be dead configuration.
+services:
+  taskboard.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__TaskBoardDb=Server=db,1433;Database=TaskBoardDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    ports:
+      # Host port 14330, not 1433: a machine with its own locally-installed
+      # SQL Server/Express instance (common alongside Visual Studio) will
+      # already own 1433, silently stealing connections meant for this
+      # container instead of failing to bind. Only the host-side port
+      # changes here — container-to-container traffic (the taskboard.api
+      # service's own connection string above) still uses the standard
+      # 1433 on the "db" service's own network alias.
+      - "14330:1433"
