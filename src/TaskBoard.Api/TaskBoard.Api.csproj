@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>13311217-89ef-4183-bf34-d30a0a093caa</UserSecretsId>
@@ -10,17 +10,11 @@
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
-  <!--
-    NOTE: this project could not be restored/built in the sandbox that
-    produced it (nuget.org is not reachable from there — see the README's
-    "A build note" section). The EF Core APIs used in this project
-    (AddDbContext, UseSqlServer, EnsureCreatedAsync, DbSet<T>) are long-
-    stable, widely-used surface area, but run `dotnet restore && dotnet
-    build` on your own machine before relying on this.
-  -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.17.11" />
   </ItemGroup>
 
 </Project>

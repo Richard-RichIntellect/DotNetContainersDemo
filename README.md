@@ -1,6 +1,6 @@
 # TaskBoard — .NET + Docker containers demo
 
-A small ASP.NET Core 8 Web API (EF Core, SQL Server) demonstrating three
+A small ASP.NET Core 10 Web API (EF Core, SQL Server) demonstrating three
 things about containers:
 
 1. **The whole dependency graph lives in containers.** SQL Server isn't
@@ -23,7 +23,7 @@ it, the same way it assumes the .NET SDK is already installed.
 
 - Docker (Docker Desktop, Docker Engine inside WSL2 Ubuntu, or any other
   install) with `docker compose`
-- .NET 8 SDK — only needed if you're building/running outside Docker
+- .NET 10 SDK — only needed if you're building/running outside Docker
 
 ## Run everything with Docker Compose
 
@@ -66,6 +66,12 @@ curl -X POST http://localhost:8080/tasks \
   -H "Content-Type: application/json" \
   -d '{"title":"Ship it"}'
 ```
+
+Or browse the API interactively at
+[http://localhost:8080/scalar/v1](http://localhost:8080/scalar/v1) — a
+Scalar UI generated from the API's own OpenAPI document
+(`/openapi/v1.json`), available whenever the API runs in Development (the
+default for every workflow in this README).
 
 ## Share the image with a colleague
 

@@ -4,17 +4,17 @@
 #
 # This is the standard shape Visual Studio's own "Add > Docker Support"
 # (or Container Orchestrator Support) wizard generates for an ASP.NET Core
-# 8 web project — not hand-invented for this demo. Build context is the
+# web project — not hand-invented for this demo. Build context is the
 # repository root (see docker-compose.yml), which is why the COPY paths
 # below start with src/TaskBoard.Api/ rather than being relative to this
 # file's own folder.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/TaskBoard.Api/TaskBoard.Api.csproj", "src/TaskBoard.Api/"]

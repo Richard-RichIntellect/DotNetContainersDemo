@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using TaskBoard.Api.Data;
 using TaskBoard.Api.Endpoints;
 
@@ -12,18 +13,28 @@ var connectionString = builder.Configuration.GetConnectionString("TaskBoardDb")
     ?? throw new InvalidOperationException("Connection string 'TaskBoardDb' is not configured.");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 // Create the schema on startup if it doesn't exist yet. This is the
 // simplest option for a demo repo — no dotnet-ef tool, no Migrations/
 // folder to keep in sync. A real service would use EF Core migrations
 // (dotnet ef migrations add / database.Migrate()) instead; see the README.
 //
-// SQL Server takes a few seconds to accept connections after its
-// container starts. docker-compose.yml gives it a healthcheck and the API
-// service waits on it (depends_on: condition: service_healthy), but this
-// retry loop is cheap insurance against a slow first boot either way.
+// This retry loop isn't just insurance against a slow SQL Server first
+// boot — it's load-bearing. The healthcheck in docker-compose.yml reports
+// "healthy" as soon as SQL Server itself accepts connections, which is
+// before EnsureCreatedAsync's very first call has actually created the
+// TaskBoardDb database. That first attempt reliably fails (SQL Server only
+// tells the client "Login failed for user 'sa'." either way, regardless of
+// the real reason), and the retry is what gets far enough to create it.
 await EnsureDatabaseReadyAsync(app.Services, app.Logger);
 
 app.MapGet("/", () => "TaskBoard.Api is running. See README for endpoints.");
